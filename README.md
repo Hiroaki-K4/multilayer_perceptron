@@ -61,3 +61,11 @@ python describe.py dataset/wdbc.csv
 ```
 
 <img src='images/describe.png' width='700'>
+
+The following commands can be used to obtain a histogram about the data.
+
+```bash
+python histogram.py dataset/wdbc.csv
+```
+
+<img src='images/histogram.png' width='700'>
