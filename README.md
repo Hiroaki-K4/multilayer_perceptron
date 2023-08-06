@@ -69,3 +69,8 @@ python histogram.py dataset/wdbc.csv
 ```
 
 <img src='images/histogram.png' width='700'>
+
+<br></br>
+
+## Reference
+- [Multilayer perceptron](https://en.wikipedia.org/wiki/Multilayer_perceptron)
