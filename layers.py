@@ -4,8 +4,9 @@ import numpy as np
 class Affine:
     def __init__(self, input_size, output_size):
         print("Hello, Affine class")
-        self.w = np.ones((input_size, output_size))
-        self.b = 1.2
+        self.w = np.random.randn(input_size, output_size) / np.sqrt(input_size)
+        rng = np.random.default_rng()
+        self.b = rng.random()
 
     def forward(self, x):
         print("Affine forward")
