@@ -2,7 +2,7 @@ import csv
 import sys
 import random
 import numpy as np
-from layers import Affine, BinaryCrossEntropy
+from layers import Affine, Sigmoid, Softmax, BinaryCrossEntropy
 from network import MultilayerPerceptron
 
 
@@ -43,21 +43,21 @@ def main(data_path: str):
     hidden_layer_size = 50
 
     input_layer = Affine(input_size, hidden_layer_size)
+    sigmoid_layer_0 = Sigmoid()
     hidden_layer_0 = Affine(hidden_layer_size, hidden_layer_size)
+    sigmoid_layer_1 = Sigmoid()
     hidden_layer_1 = Affine(hidden_layer_size, 2)
-    output_layer = BinaryCrossEntropy()
-    layers = [input_layer, hidden_layer_0, hidden_layer_1]
-    net = MultilayerPerceptron(layers)
+    sigmoid_layer_2 = Sigmoid()
+    softmax_layer = Softmax()
+    loss_layer = BinaryCrossEntropy()
+    layers = [input_layer, sigmoid_layer_0,  hidden_layer_0, sigmoid_layer_1, hidden_layer_1, sigmoid_layer_2, softmax_layer]
+    net = MultilayerPerceptron(layers, loss_layer)
 
-    ans_0 = input_layer.forward(feature_arr)
-    print(ans_0.shape)
-    ans_1 = hidden_layer_0.forward(ans_0)
-    print(ans_1.shape)
-    ans_2 = hidden_layer_1.forward(ans_1)
-    print(ans_2.shape)
-    ans_3 = output_layer.forward(ans_2)
-    print(ans_3.shape)
-    print(ans_3)
+    input_arr = feature_arr
+
+    net.predict(input_arr, layers)
+    loss = net.calculate_loss(input_arr, label_arr, layers)
+    print("loss: ", loss)
 
 
 if __name__ == "__main__":
