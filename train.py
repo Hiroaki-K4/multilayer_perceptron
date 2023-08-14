@@ -48,16 +48,17 @@ def main(data_path: str):
     sigmoid_layer_1 = Sigmoid()
     hidden_layer_1 = Affine(hidden_layer_size, 2)
     sigmoid_layer_2 = Sigmoid()
-    softmax_layer = Softmax()
+    softmax_layer = Softmax(batch_size, 2)
     loss_layer = BinaryCrossEntropy()
     layers = [input_layer, sigmoid_layer_0,  hidden_layer_0, sigmoid_layer_1, hidden_layer_1, sigmoid_layer_2, softmax_layer]
     net = MultilayerPerceptron(layers, loss_layer)
 
     input_arr = feature_arr
 
-    net.predict(input_arr, layers)
     loss = net.calculate_loss(input_arr, label_arr, layers)
     print("loss: ", loss)
+
+    net.backward(label_arr, layers)
 
 
 if __name__ == "__main__":
