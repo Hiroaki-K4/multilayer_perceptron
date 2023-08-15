@@ -97,9 +97,9 @@ def main(data_path: str, output_param_path: str):
         hidden_layer_1,
         softmax_layer,
     ]
-    net = MultilayerPerceptron(layers, loss_layer)
+    net = MultilayerPerceptron(layers, loss_layer, batch_size)
 
-    iters_num = 10
+    iters_num = 10000
     epoch_cnt = 0
     epoch_num = int(len(normed_train_feature_list) / batch_size + 1)
     epoch_all = int(iters_num / epoch_num)
