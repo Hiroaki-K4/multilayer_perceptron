@@ -9,8 +9,9 @@ class Affine:
         self.b = np.zeros(output_size)
         self.lr_rate = lr_rate
 
-    def forward(self, x):
-        self.x = x
+    def forward(self, x, is_train):
+        if is_train:
+            self.x = x
         return np.dot(x, self.w) + self.b
 
     def backward(self, dx):
@@ -21,18 +22,33 @@ class Affine:
         res = np.dot(dx, self.w.T)
         return res
 
+    def save_parameters(self, params):
+        param_dict = {}
+        param_dict["layer"] = "Affine"
+        param_dict["weights"] = self.w.tolist()
+        param_dict["bias"] = self.b.tolist()
+        params.append(param_dict)
+        return params
+
 
 class Sigmoid:
     def __init__(self):
         self.out = None
 
-    def forward(self, x):
-        self.out = 1 / (1 + np.exp(-x))
+    def forward(self, x, is_train):
+        if is_train:
+            self.out = 1 / (1 + np.exp(-x))
         return self.out
 
     def backward(self, dx):
         res = dx * (1 - self.out) * self.out
         return res
+
+    def save_parameters(self, params):
+        param_dict = {}
+        param_dict["layer"] = "Sigmoid"
+        params.append(param_dict)
+        return params
 
 
 class Softmax:
@@ -40,12 +56,13 @@ class Softmax:
         self.x = None
         self.dx = np.zeros((input_size, output_size))
 
-    def forward(self, x):
+    def forward(self, x, is_train):
         exp_sum = np.sum(np.exp(x), axis=1)
         for i in range(x.shape[0]):
             x[i, :] = np.exp(x[i, :]) / exp_sum[i]
 
-        self.x = x
+        if is_train:
+            self.x = x
         return x
 
     def backward(self, label):
@@ -57,6 +74,12 @@ class Softmax:
 
         return self.dx
 
+    def save_parameters(self, params):
+        param_dict = {}
+        param_dict["layer"] = "Softmax"
+        params.append(param_dict)
+        return params
+
 
 class BinaryCrossEntropy:
     def forward(self, x, label):
@@ -66,3 +89,9 @@ class BinaryCrossEntropy:
             loss_sum += label[i] * np.log(prob) + (1 - label[i]) * np.log(1 - prob)
 
         return (-1) * loss_sum / x.shape[0]
+
+    def save_parameters(self, params):
+        param_dict = {}
+        param_dict["layer"] = "BinaryCrossEntropy"
+        params.append(param_dict)
+        return params

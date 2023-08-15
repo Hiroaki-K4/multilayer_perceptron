@@ -72,5 +72,19 @@ python histogram.py dataset/wdbc.csv
 
 <br></br>
 
+## Training
+
+```bash
+python3 train.py --train_data_path dataset/wdbc.csv --output_param_path model/param.json
+```
+
+## Prediction
+
+```bash
+python3 predict.py --test_data_path dataset/wdbc_test.csv --param_path model/param.json
+```
+
+<br></br>
+
 ## Reference
 - [Multilayer perceptron](https://en.wikipedia.org/wiki/Multilayer_perceptron)
