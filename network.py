@@ -2,7 +2,6 @@
 
 class MultilayerPerceptron:
     def __init__(self, layers, loss_layer):
-        print("Hello, MultilayerPerceptron")
         self.layers = layers
         self.loss_layer = loss_layer
 
@@ -10,21 +9,19 @@ class MultilayerPerceptron:
         input_arr = x
         for layer in layers:
             res = layer.forward(input_arr)
-            print("res: ", res)
             input_arr = res
 
         return res
 
     def calculate_loss(self, x, label, layers):
         res = self.predict(x, layers)
-
         return self.loss_layer.forward(res, label)
 
     def backward(self, label, layers):
-        # self.loss_layer.backward()
         dx = label
         for layer in reversed(layers):
             res = layer.backward(dx)
-            print("res: ", res)
-            # input()
             dx = res
+
+    def save_parameters(self):
+        print("save")
