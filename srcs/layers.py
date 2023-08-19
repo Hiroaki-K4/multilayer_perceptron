@@ -7,6 +7,8 @@ class Affine:
         self.w = np.random.randn(input_size, output_size) / np.sqrt(input_size)
         rng = np.random.default_rng()
         self.b = np.zeros(output_size)
+        self.input_size = input_size
+        self.output_size = output_size
         self.lr_rate = lr_rate
 
     def forward(self, x, is_train):
@@ -27,6 +29,9 @@ class Affine:
         param_dict["layer"] = "Affine"
         param_dict["weights"] = self.w.tolist()
         param_dict["bias"] = self.b.tolist()
+        param_dict["input_size"] = self.input_size
+        param_dict["output_size"] = self.output_size
+        param_dict["lr_rate"] = self.lr_rate
         params.append(param_dict)
         return params
 
@@ -36,9 +41,10 @@ class Sigmoid:
         self.out = None
 
     def forward(self, x, is_train):
+        res = 1 / (1 + np.exp(-x))
         if is_train:
-            self.out = 1 / (1 + np.exp(-x))
-        return self.out
+            self.out = res
+        return res
 
     def backward(self, dx):
         res = dx * (1 - self.out) * self.out
@@ -55,6 +61,8 @@ class Softmax:
     def __init__(self, input_size, output_size):
         self.x = None
         self.dx = np.zeros((input_size, output_size))
+        self.input_size = input_size
+        self.output_size = output_size
 
     def forward(self, x, is_train):
         exp_sum = np.sum(np.exp(x), axis=1)
@@ -68,15 +76,17 @@ class Softmax:
     def backward(self, label):
         for i in range(self.x.shape[0]):
             if label[i] == 1:
-                self.dx[i] = np.array([self.x[i, 0]-1, self.x[i, 1]-0])
+                self.dx[i] = np.array([self.x[i, 0] - 1, self.x[i, 1] - 0])
             else:
-                self.dx[i] = np.array([self.x[i, 0]-0, self.x[i, 1]-1])
+                self.dx[i] = np.array([self.x[i, 0] - 0, self.x[i, 1] - 1])
 
         return self.dx
 
     def save_parameters(self, params):
         param_dict = {}
         param_dict["layer"] = "Softmax"
+        param_dict["input_size"] = self.input_size
+        param_dict["output_size"] = self.output_size
         params.append(param_dict)
         return params
 

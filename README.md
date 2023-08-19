@@ -57,7 +57,7 @@ resulting in 30 features.  For instance, field 3 is Mean Radius, field
 The following commands can be used to obtain statistical information about the data.
 
 ```bash
-python describe.py dataset/wdbc.csv
+python3 srcs/describe.py dataset/wdbc.csv
 ```
 
 <img src='images/describe.png' width='700'>
@@ -65,7 +65,7 @@ python describe.py dataset/wdbc.csv
 The following commands can be used to obtain a histogram about the data.
 
 ```bash
-python histogram.py dataset/wdbc.csv
+python3 srcs/histogram.py dataset/wdbc.csv
 ```
 
 <img src='images/histogram.png' width='700'>
@@ -75,13 +75,13 @@ python histogram.py dataset/wdbc.csv
 ## Training
 
 ```bash
-python3 train.py --train_data_path dataset/wdbc.csv --output_param_path model/param.json
+python3 srcs/train.py --train_data_path dataset/wdbc.csv --output_param_path model/param.json
 ```
 
 ## Prediction
 
 ```bash
-python3 predict.py --test_data_path dataset/wdbc_test.csv --param_path model/param.json
+python3 srcs/predict.py --test_data_path dataset/wdbc_test.csv --param_path model/param.json
 ```
 
 <br></br>

@@ -5,58 +5,11 @@ import sys
 
 import numpy as np
 
+from evaluate import calculate_accuracy
 from layers import Affine, BinaryCrossEntropy, Sigmoid, Softmax
 from network import MultilayerPerceptron
 from normalize import get_min_max, normalize_range
-
-
-def extract_input_data(input_data_list):
-    feature_list = []
-    label_list = []
-    for data in input_data_list:
-        feature_num = []
-        for i in range(2, len(data)):
-            feature_num.append(float(data[i]))
-        feature_list.append(feature_num)
-
-        if data[1] == "M":
-            label_list.append(1)
-        elif data[1] == "B":
-            label_list.append(0)
-
-    return feature_list, label_list
-
-
-def get_norm_feature_list(feature_list):
-    min_list, max_list = get_min_max(np.array(feature_list))
-    normed_arr = normalize_range(np.array(feature_list), min_list, max_list)
-    normed_feature_list = normed_arr.tolist()
-
-    return normed_feature_list
-
-
-def split_data_to_train_and_val(input_data_list, val_size):
-    random_idx = random.sample(range(len(input_data_list)), val_size)
-    train_data = []
-    val_data = []
-    for i in range(len(input_data_list)):
-        if i in random_idx:
-            val_data.append(input_data_list[i])
-        else:
-            train_data.append(input_data_list[i])
-
-    train_feature_list, train_label_list = extract_input_data(train_data)
-    val_feature_list, val_label_list = extract_input_data(val_data)
-
-    normed_train_feature_list = get_norm_feature_list(train_feature_list)
-    normed_val_feature_list = get_norm_feature_list(val_feature_list)
-
-    return (
-        normed_train_feature_list,
-        train_label_list,
-        normed_val_feature_list,
-        val_label_list,
-    )
+from preprocess import split_data_to_train_and_val
 
 
 def main(data_path: str, output_param_path: str):
@@ -97,9 +50,9 @@ def main(data_path: str, output_param_path: str):
         hidden_layer_1,
         softmax_layer,
     ]
-    net = MultilayerPerceptron(layers, loss_layer)
+    net = MultilayerPerceptron(layers, loss_layer, batch_size)
 
-    iters_num = 10
+    iters_num = 10000
     epoch_cnt = 0
     epoch_num = int(len(normed_train_feature_list) / batch_size + 1)
     epoch_all = int(iters_num / epoch_num)
@@ -130,12 +83,30 @@ def main(data_path: str, output_param_path: str):
 
         if itr % epoch_num == 0:
             epoch_cnt += 1
-            val_loss = net.calculate_loss(np.array(normed_val_feature_list), np.array(val_label_list), layers, False)
-            print("Epoch: {0}/{1} Loss: {2} Val Loss: {3}".format(epoch_cnt, epoch_all, round(loss, 4), round(val_loss, 4)))
-
-    print("Final Loss: ", loss)
+            val_loss = net.calculate_loss(
+                np.array(normed_val_feature_list),
+                np.array(val_label_list),
+                layers,
+                False,
+            )
+            print(
+                "Epoch: {0}/{1} Loss: {2} Val Loss: {3}".format(
+                    epoch_cnt, epoch_all, round(loss, 4), round(val_loss, 4)
+                )
+            )
 
     net.save_parameters(output_param_path)
+    train_acc = calculate_accuracy(
+        net, layers, batch_size, normed_train_feature_list, train_label_list
+    )
+    val_acc = calculate_accuracy(
+        net, layers, batch_size, normed_val_feature_list, val_label_list
+    )
+    print()
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("Final Loss: ", loss)
+    print("Train Accuracy: {0}%".format(round(train_acc * 100, 1)))
+    print("Val Accuracy: {0}%".format(round(val_acc * 100, 1)))
 
 
 if __name__ == "__main__":
@@ -144,4 +115,6 @@ if __name__ == "__main__":
     parser.add_argument("--output_param_path")
     args = parser.parse_args()
 
+    random.seed(10)
+    np.random.seed(10)
     main(args.train_data_path, args.output_param_path)

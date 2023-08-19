@@ -2,9 +2,10 @@ import json
 
 
 class MultilayerPerceptron:
-    def __init__(self, layers, loss_layer):
+    def __init__(self, layers, loss_layer, batch_size):
         self.layers = layers
         self.loss_layer = loss_layer
+        self.batch_size = batch_size
 
     def predict(self, x, layers, is_train):
         input_arr = x
@@ -30,5 +31,8 @@ class MultilayerPerceptron:
             params = layer.save_parameters(params)
 
         params = self.loss_layer.save_parameters(params)
-        with open(output_param_path, 'w') as f:
-            json.dump(params, f, indent=4)
+        save_data = {}
+        save_data["params"] = params
+        save_data["batch_size"] = self.batch_size
+        with open(output_param_path, "w") as f:
+            json.dump(save_data, f, indent=4)
