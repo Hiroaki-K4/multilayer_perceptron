@@ -41,9 +41,10 @@ class Sigmoid:
         self.out = None
 
     def forward(self, x, is_train):
+        res = 1 / (1 + np.exp(-x))
         if is_train:
-            self.out = 1 / (1 + np.exp(-x))
-        return self.out
+            self.out = res
+        return res
 
     def backward(self, dx):
         res = dx * (1 - self.out) * self.out
@@ -75,9 +76,9 @@ class Softmax:
     def backward(self, label):
         for i in range(self.x.shape[0]):
             if label[i] == 1:
-                self.dx[i] = np.array([self.x[i, 0]-1, self.x[i, 1]-0])
+                self.dx[i] = np.array([self.x[i, 0] - 1, self.x[i, 1] - 0])
             else:
-                self.dx[i] = np.array([self.x[i, 0]-0, self.x[i, 1]-1])
+                self.dx[i] = np.array([self.x[i, 0] - 0, self.x[i, 1] - 1])
 
         return self.dx
 

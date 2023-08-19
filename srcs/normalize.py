@@ -1,3 +1,4 @@
+import numpy as np
 
 
 def normalize_range(data_arr, min_list, max_list):
@@ -19,3 +20,11 @@ def get_min_max(data_arr):
         max_list.append(float(max(col)))
 
     return min_list, max_list
+
+
+def get_norm_feature_list(feature_list):
+    min_list, max_list = get_min_max(np.array(feature_list))
+    normed_arr = normalize_range(np.array(feature_list), min_list, max_list)
+    normed_feature_list = normed_arr.tolist()
+
+    return normed_feature_list

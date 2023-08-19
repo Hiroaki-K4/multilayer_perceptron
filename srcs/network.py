@@ -34,5 +34,5 @@ class MultilayerPerceptron:
         save_data = {}
         save_data["params"] = params
         save_data["batch_size"] = self.batch_size
-        with open(output_param_path, 'w') as f:
+        with open(output_param_path, "w") as f:
             json.dump(save_data, f, indent=4)
