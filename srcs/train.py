@@ -3,13 +3,31 @@ import csv
 import random
 import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
-
 from evaluate import calculate_accuracy
 from layers import Affine, BinaryCrossEntropy, Sigmoid, Softmax
 from network import MultilayerPerceptron
 from normalize import get_min_max, normalize_range
 from preprocess import split_data_to_train_and_val
+
+
+def draw_learning_history(learning_history):
+    epoch = []
+    train_loss = []
+    val_loss = []
+    for key in learning_history:
+        epoch.append(key)
+        train_loss.append(learning_history[key]["train_loss"])
+        val_loss.append(learning_history[key]["val_loss"])
+
+    plt.plot(epoch, train_loss, label="Training loss")
+    plt.plot(epoch, val_loss, label="Validation loss")
+    plt.ylabel("Loss")
+    plt.xlabel("Epoch")
+    plt.title("Learning curves for a multilayer perceptron")
+    plt.legend()
+    plt.show()
 
 
 def main(data_path: str, output_param_path: str):
@@ -52,11 +70,12 @@ def main(data_path: str, output_param_path: str):
     ]
     net = MultilayerPerceptron(layers, loss_layer, batch_size)
 
-    iters_num = 10000
+    iters_num = 15000
     epoch_cnt = 0
     epoch_num = int(len(normed_train_feature_list) / batch_size + 1)
     epoch_all = int(iters_num / epoch_num)
     loss_thr = 1e-3
+    learning_history = {}
     for itr in range(iters_num):
         random_idx = random.sample(range(len(normed_train_feature_list)), batch_size)
         batch_feature_list = []
@@ -89,11 +108,14 @@ def main(data_path: str, output_param_path: str):
                 layers,
                 False,
             )
+            learning_history[epoch_cnt] = {"train_loss": loss, "val_loss": val_loss}
             print(
                 "Epoch: {0}/{1} Loss: {2} Val Loss: {3}".format(
                     epoch_cnt, epoch_all, round(loss, 4), round(val_loss, 4)
                 )
             )
+
+    draw_learning_history(learning_history)
 
     net.save_parameters(output_param_path)
     train_acc = calculate_accuracy(
