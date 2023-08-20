@@ -4,7 +4,6 @@ import json
 import random
 
 import numpy as np
-
 from evaluate import calculate_accuracy
 from layers import Affine, BinaryCrossEntropy, Sigmoid, Softmax
 from network import MultilayerPerceptron
@@ -45,8 +44,8 @@ def main(test_data_path: str, param_path: str):
     batch_size = param_data["batch_size"]
     net = MultilayerPerceptron(layers, loss_layer, batch_size)
     test_loss = net.calculate_loss(
-        np.array(normed_test_feature_list[:100]),
-        np.array(test_label_list[:100]),
+        np.array(normed_test_feature_list[:batch_size]),
+        np.array(test_label_list[:batch_size]),
         layers,
         False,
     )

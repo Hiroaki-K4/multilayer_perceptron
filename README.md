@@ -78,11 +78,17 @@ python3 srcs/histogram.py dataset/wdbc.csv
 python3 srcs/train.py --train_data_path dataset/wdbc.csv --output_param_path model/param.json
 ```
 
-## Prediction
+<img src='images/learning_curve.png' width='700'>
+
+<img src='images/training.png' width='400'>
+
+## Prediction and evaluation
 
 ```bash
 python3 srcs/predict.py --test_data_path dataset/wdbc_test.csv --param_path model/param.json
 ```
+
+<img src='images/prediction.png' width='150'>
 
 <br></br>
 
