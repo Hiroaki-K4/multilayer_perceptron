@@ -3,7 +3,7 @@ The goal of this project is to build a multi-layer perceptron from scratch to cr
 
 <br></br>
 
-## Multilayer perceptron
+# Multilayer perceptron
 The multilayer perceptron is a feedforward network (meaning that the data flows from the input layer to the output layer) defined by the presence of one or more hidden layers as well as an interconnection of all the neurons of one layer to the next.
 
 <img src='images/multilayer.png' width='700'>
@@ -16,7 +16,7 @@ output always equal to 1. Like a perceptron it is connected to all the neurons o
 
 <br></br>
 
-## Perceptron
+# Perceptron
 The perceptron is the type of neuron that the multilayer perceptron is composed
 of. They are defined by the presence of one or more input connections, an activation function and a single output. Each connection contains a weight (also called parameter) which is learned during the training phase.
 
@@ -32,12 +32,16 @@ The second step consists in applying an activation function on this weighted sum
 
 <br></br>
 
-## Dataset attribute information
+# Dataset attribute information
+We use the dataset describe the characteristics of a cell nucleus of breast mass extracted with fine-needle aspiration for the training. It is a csv file of 32 columns, the column diagnosis being the label we want to learn given all the other features of an example, it can be either the value M or B (for malignant or benign).
 
-### Column1. ID number
-### Column2. Diagnosis (M = malignant, B = benign)
-### Column3~32. Ten real-valued features are computed for each cell nucleus:
+The description of each columns is as follows.
 
+- Column1 -> `ID number`
+- Column2 -> `Diagnosis (M = malignant, B = benign)`
+- Column3~32 -> `Ten real-valued features are computed for each cell nucleus`
+
+```
 	a) radius (mean of distances from center to points on the perimeter)
 	b) texture (standard deviation of gray-scale values)
 	c) perimeter
@@ -48,6 +52,7 @@ The second step consists in applying an activation function on this weighted sum
 	h) concave points (number of concave portions of the contour)
 	i) symmetry
 	j) fractal dimension ("coastline approximation" - 1)
+```
 
 The mean, standard error, and "worst" or largest (mean of the three
 largest values) of these features were computed for each image,
@@ -73,15 +78,21 @@ python3 srcs/histogram.py dataset/wdbc.csv
 
 <br></br>
 
-## Training
-Two hidden layers are included in the training. I also use the binary cross entropy to calculate the loss. Parameters are updated according to the learning rate after the gradient is obtained by back propagation.
+# Training
+Two hidden layers are included in the training. I also use the binary cross entropy to calculate the loss.
 
 $$
-E=-\frac{1}{N}\sum_{n=1}^N (y_n \log{p_n}+(1−y_n) \log(1−p_n))
+E=-\frac{1}{N}\sum_{n=1}^N(y_n\log p_n+(1−y_n)\log(1−p_n))
+$$
+
+According to the learning rate, parameters are updated using gradient descent after the gradient is obtained by backpropagation.
+
+$$
+x=x-\alpha\frac{\partial f}{\partial x}
 $$
 
 
-### Layers
+## Layers
 The networks used for the training are as follows.
 
 ```
@@ -94,7 +105,66 @@ The networks used for the training are as follows.
 - BinaryCrossEntropy
 ```
 
-### Parameters
+It is more versatile to organize the layers in class as follows.
+
+```python
+class Sigmoid:
+    def __init__(self):
+        self.out = None
+
+    def forward(self, x, is_train):
+        res = 1 / (1 + np.exp(-x))
+        if is_train:
+            self.out = res
+        return res
+
+    def backward(self, dx):
+        res = dx * (1 - self.out) * self.out
+        return res
+```
+
+The computation of forward and backward for each layer can be performed with the following for statement.
+
+```python
+def predict(self, x, layers, is_train):
+	input_arr = x
+	for layer in layers:
+		res = layer.forward(input_arr, is_train)
+		input_arr = res
+
+	return res
+
+def backward(self, label, layers):
+	dx = label
+	for layer in reversed(layers):
+		res = layer.backward(dx)
+		dx = res
+```
+
+## Backpropagation
+If the input value is $x$, the output value is $y$, and the final result is $L$, the gradient at each layer can be calculated as follows.
+
+- **Affine layer**  
+$w$ is a weight and $b$ is a bias.
+
+$$
+\frac{\partial L}{\partial x}=\frac{\partial L}{\partial y}w^\intercal, \quad \frac{\partial L}{\partial w}=x^\intercal\frac{\partial L}{\partial y}, \quad \frac{\partial L}{\partial b}=\frac{\partial L}{\partial y}
+$$
+
+- **Sigmoid layer**
+
+$$
+\frac{\partial L}{\partial x}=\frac{\partial L}{\partial y}y(1-y)
+$$
+
+- **Softmax with loss layer**  
+$t$ is a label.
+
+$$
+\frac{\partial L}{\partial x}=y-t
+$$
+
+## Hyperparameters
 The training was conducted under the following conditions.
 - Iterations -> `15000`
 - Batch size -> `100`
@@ -111,7 +181,9 @@ python3 srcs/train.py --train_data_path dataset/wdbc.csv --output_param_path mod
 
 <img src='images/training.png' width='400'>
 
-## Prediction and evaluation
+<br></br>
+
+# Prediction and evaluation
 
 You can predict the test data and evaluate your model by running below command.
 
@@ -123,6 +195,6 @@ python3 srcs/predict.py --test_data_path dataset/wdbc_test.csv --param_path mode
 
 <br></br>
 
-## References
+# References
 - [Multilayer perceptron](https://en.wikipedia.org/wiki/Multilayer_perceptron)
 - [Deep Learning from scratch](https://www.oreilly.co.jp/books/9784873117584/)
