@@ -123,5 +123,6 @@ python3 srcs/predict.py --test_data_path dataset/wdbc_test.csv --param_path mode
 
 <br></br>
 
-## Reference
+## References
 - [Multilayer perceptron](https://en.wikipedia.org/wiki/Multilayer_perceptron)
+- [Deep Learning from scratch](https://www.oreilly.co.jp/books/9784873117584/)
