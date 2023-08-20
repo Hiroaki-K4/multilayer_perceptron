@@ -34,9 +34,9 @@ The second step consists in applying an activation function on this weighted sum
 
 ## Dataset attribute information
 
-### 1. ID number
-### 2. Diagnosis (M = malignant, B = benign)
-### 3-32. Ten real-valued features are computed for each cell nucleus:
+### Column1. ID number
+### Column2. Diagnosis (M = malignant, B = benign)
+### Column3~32. Ten real-valued features are computed for each cell nucleus:
 
 	a) radius (mean of distances from center to points on the perimeter)
 	b) texture (standard deviation of gray-scale values)
@@ -54,6 +54,7 @@ largest values) of these features were computed for each image,
 resulting in 30 features.  For instance, field 3 is Mean Radius, field
 13 is Radius SE, field 23 is Worst Radius.
 
+For more information, you can check `dataset/wdbc.names` file.
 The following commands can be used to obtain statistical information about the data.
 
 ```bash
@@ -73,6 +74,34 @@ python3 srcs/histogram.py dataset/wdbc.csv
 <br></br>
 
 ## Training
+Two hidden layers are included in the training. I also use the binary cross entropy to calculate the loss. Parameters are updated according to the learning rate after the gradient is obtained by back propagation.
+
+$$
+E=-\frac{1}{N}\sum_{n=1}^N (y_n \log{p_n}+(1−y_n) \log(1−p_n))
+$$
+
+
+### Layers
+The networks used for the training are as follows.
+
+```
+- Affine
+- Sigmoid
+- Affine
+- Sigmoid
+- Affine
+- Softmax
+- BinaryCrossEntropy
+```
+
+### Parameters
+The training was conducted under the following conditions.
+- Iterations -> `15000`
+- Batch size -> `100`
+- Learning rate -> `0.0001`
+- Hidden layer size -> `50`
+
+You can train a model about the data by running below command.
 
 ```bash
 python3 srcs/train.py --train_data_path dataset/wdbc.csv --output_param_path model/param.json
@@ -83,6 +112,8 @@ python3 srcs/train.py --train_data_path dataset/wdbc.csv --output_param_path mod
 <img src='images/training.png' width='400'>
 
 ## Prediction and evaluation
+
+You can predict the test data and evaluate your model by running below command.
 
 ```bash
 python3 srcs/predict.py --test_data_path dataset/wdbc_test.csv --param_path model/param.json
