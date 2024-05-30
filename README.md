@@ -1,6 +1,9 @@
 # multilayer_perceptron
 The goal of this project is to build a multi-layer perceptron from scratch to create a model that predicts the outcome of a breast cancer diagnosis.
 
+## Related article of mine
+- [Building a Multi Layer Perceptron from Scratch](https://medium.com/@hirok4/building-a-multi-layer-perceptron-from-scratch-c9679752cf48)
+
 <br></br>
 
 # Multilayer perceptron
